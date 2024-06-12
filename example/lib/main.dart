@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() => runApp(MyApp());
 
@@ -98,12 +97,21 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   _getPolyline() async {
+    PolylineRequest request = PolylineRequest(
+      origin: PointLatLng(_originLatitude, _originLongitude),
+      destination: PointLatLng(_destLatitude, _destLongitude),
+      mode: TravelMode.driving,
+      wayPoints: [PolylineWayPoint(location: "Sabo, Yaba Lagos Nigeria")],
+      avoidHighways: false,
+      avoidTolls: false,
+      avoidFerries: false,
+      optimizeWaypoints: false,
+      alternatives: false,
+    );
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        googleAPiKey,
-        PointLatLng(_originLatitude, _originLongitude),
-        PointLatLng(_destLatitude, _destLongitude),
-        travelMode: TravelMode.driving,
-        wayPoints: [PolylineWayPoint(location: "Sabo, Yaba Lagos Nigeria")]);
+      request: request,
+      googleApiKey: googleAPiKey,
+    );
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
