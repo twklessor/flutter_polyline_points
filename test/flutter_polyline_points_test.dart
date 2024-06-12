@@ -1,15 +1,25 @@
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_polyline_points/src/constants.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 void main() {
   test('get list of coordinates from two geographical positions', () async {
     final polylinePoints = PolylinePoints();
+    final request = PolylineRequest(
+      origin: PointLatLng(6.5212402, 3.3679965),
+      destination: PointLatLng(6.595680, 3.337030),
+      mode: TravelMode.driving,
+      wayPoints: [],
+      avoidHighways: false,
+      avoidTolls: false,
+      avoidFerries: false,
+      optimizeWaypoints: false,
+      alternatives: false,
+    );
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        Constants.API_KEY, PointLatLng(6.5212402, 3.3679965),
-        PointLatLng(6.595680, 3.337030),
-        travelMode: TravelMode.driving);
+      request: request,
+        googleApiKey: Constants.API_KEY,
+        );
     assert(result.points.isNotEmpty == true);
   });
 
