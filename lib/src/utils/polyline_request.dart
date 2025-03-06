@@ -71,23 +71,27 @@ class PolylineRequest {
       "origin": "${origin.latitude},${origin.longitude}",
       "destination": "${destination.latitude},${destination.longitude}",
       "mode": mode.name,
-      "avoidHighways": "$avoidHighways",
-      "avoidFerries": "$avoidFerries",
-      "avoidTolls": "$avoidTolls",
       "alternatives": "$alternatives",
       "arrival_time": arrivalTime,
       "departure_time": departureTime,
       "transit_mode": transitMode
     });
     if (wayPoints.isNotEmpty) {
-      List wayPointsArray = [];
-      wayPoints.forEach((point) => wayPointsArray.add(point.location));
+      final wayPointsArray = wayPoints.map((point) => point.location);
       String wayPointsString = wayPointsArray.join('|');
       if (optimizeWaypoints) {
         wayPointsString = 'optimize:true|$wayPointsString';
       }
-      params.addAll({"waypoints": wayPointsString});
+      params["waypoints"] = wayPointsString;
     }
+
+    final avoidOptions = <String>[];
+
+    if (avoidHighways) avoidOptions.add("highways");
+    if (avoidTolls) avoidOptions.add("tolls");
+    if (avoidFerries) avoidOptions.add("ferries");
+    if (avoidOptions.isNotEmpty) params["avoid"] = avoidOptions.join('|');
+
     return params;
   }
 
