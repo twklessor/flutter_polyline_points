@@ -18,40 +18,52 @@ class PolylinePoints {
   /// Get the list of coordinates between two geographical positions
   /// which can be used to draw polyline between this two positions
   ///
-  Future<PolylineResult> getRouteBetweenCoordinates(
-      {required PolylineRequest request, String? googleApiKey}) async {
+  Future<PolylineResult> getRouteBetweenCoordinates({
+    required PolylineRequest request,
+    String? googleApiKey,
+  }) async {
     assert(
-        (request.proxy == null &&
-                googleApiKey != null &&
-                googleApiKey.isNotEmpty) ||
-            (request.proxy != null && googleApiKey == null),
-        "Google API Key cannot be empty if proxy isn't provided");
+      (request.proxy == null &&
+              googleApiKey != null &&
+              googleApiKey.isNotEmpty) ||
+          (request.proxy != null && googleApiKey == null),
+      "Google API Key cannot be empty if proxy isn't provided",
+    );
     try {
-      var result =
-          await NetworkUtil().getRouteBetweenCoordinates(request: request);
+      var result = await NetworkUtil().getRouteBetweenCoordinates(
+        request: request,
+      );
       return result.isNotEmpty
           ? result[0]
           : PolylineResult(errorMessage: "No result found");
     } catch (e) {
+      print(e);
       rethrow;
     }
   }
 
   /// Get the list of coordinates between two geographical positions with
   /// alternative routes which can be used to draw polyline between this two positions
-  Future<List<PolylineResult>> getRouteWithAlternatives(
-      {required PolylineRequest request, String? googleApiKey}) async {
+  Future<List<PolylineResult>> getRouteWithAlternatives({
+    required PolylineRequest request,
+    String? googleApiKey,
+  }) async {
     assert(
-        (request.proxy == null &&
-                googleApiKey != null &&
-                googleApiKey.isNotEmpty) ||
-            (request.proxy != null && googleApiKey == null),
-        "Google API Key cannot be empty if proxy isn't provided");
-    assert(request.arrivalTime == null || request.departureTime == null,
-        "You can only specify either arrival time or departure time");
+      (request.proxy == null &&
+              googleApiKey != null &&
+              googleApiKey.isNotEmpty) ||
+          (request.proxy != null && googleApiKey == null),
+      "Google API Key cannot be empty if proxy isn't provided",
+    );
+    assert(
+      request.arrivalTime == null || request.departureTime == null,
+      "You can only specify either arrival time or departure time",
+    );
     try {
       return await NetworkUtil().getRouteBetweenCoordinates(request: request);
     } catch (e) {
+      print(e);
+      // throw Exception('broken');
       rethrow;
     }
   }

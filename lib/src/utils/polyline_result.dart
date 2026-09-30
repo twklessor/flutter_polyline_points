@@ -23,6 +23,7 @@ class PolylineResult {
   List<String>? distanceTexts;
   List<int>? distanceValues;
   int? totalDistanceValue;
+  int? totalDrivenDistanceValue;
   List<String>? durationTexts;
   List<int>? durationValues;
   int? totalDurationValue;
@@ -30,18 +31,20 @@ class PolylineResult {
   String? startAddress;
   String? overviewPolyline;
 
-  PolylineResult(
-      {this.status,
-      this.points = const [],
-      this.errorMessage = "",
-      this.alternatives = const [],
-      this.distanceTexts,
-      this.distanceValues,
-      this.totalDistanceValue,
-      this.durationTexts,
-      this.durationValues,
-      this.totalDurationValue,
-      this.endAddress,
-      this.startAddress,
-      this.overviewPolyline});
+  PolylineResult({
+    this.status,
+    this.points = const [],
+    this.errorMessage = "",
+    this.alternatives = const [],
+    this.distanceTexts,
+    this.distanceValues,
+    this.totalDistanceValue,
+    this.totalDrivenDistanceValue,
+    this.durationTexts,
+    this.durationValues,
+    this.totalDurationValue,
+    this.endAddress,
+    this.startAddress,
+    this.overviewPolyline,
+  });
 }

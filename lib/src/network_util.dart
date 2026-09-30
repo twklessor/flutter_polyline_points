@@ -11,8 +11,10 @@ class NetworkUtil {
 
   ///Get the encoded string from google directions api
   ///
-  Future<List<PolylineResult>> getRouteBetweenCoordinates(
-      {required PolylineRequest request, String? googleApiKey}) async {
+  Future<List<PolylineResult>> getRouteBetweenCoordinates({
+    required PolylineRequest request,
+    String? googleApiKey,
+  }) async {
     List<PolylineResult> results = [];
 
     var response = await http.get(
@@ -26,38 +28,70 @@ class NetworkUtil {
           parsedJson["routes"].isNotEmpty) {
         List<dynamic> routeList = parsedJson["routes"];
         for (var route in routeList) {
-          results.add(PolylineResult(
-            points: PolylineDecoder.run(route["overview_polyline"]["points"]),
-            errorMessage: "",
-            status: parsedJson["status"],
-            totalDistanceValue: route['legs']
-                .map((leg) => leg['distance']['value'])
-                .reduce((v1, v2) => v1 + v2),
-            distanceTexts: <String>[
-              ...route['legs'].map((leg) => leg['distance']['text'])
-            ],
-            distanceValues: <int>[
-              ...route['legs'].map((leg) => leg['distance']['value'])
-            ],
-            overviewPolyline: route["overview_polyline"]["points"],
-            totalDurationValue: route['legs']
-                .map((leg) => leg['duration']['value'])
-                .reduce((v1, v2) => v1 + v2),
-            durationTexts: <String>[
-              ...route['legs'].map((leg) => leg['duration']['text'])
-            ],
-            durationValues: <int>[
-              ...route['legs'].map((leg) => leg['duration']['value'])
-            ],
-            endAddress: route["legs"].last['end_address'],
-            startAddress: route["legs"].first['start_address'],
-          ));
+          results.add(
+            PolylineResult(
+              points: PolylineDecoder.run(route["overview_polyline"]["points"]),
+              errorMessage: "",
+              status: parsedJson["status"],
+              totalDistanceValue: route['legs']
+                  .map((leg) => leg['distance']['value'])
+                  .reduce((v1, v2) => v1 + v2),
+              totalDrivenDistanceValue: route['legs']
+                  .map((leg) => leg['steps'])
+                  .reduce((a, b) => a.addAll(b))
+                  .where(
+                    (step) =>
+                        step['maneuver'] != 'ferry' &&
+                        step['maneuver'] != 'ferry-train',
+                  )
+                  .map((step) => step['distance']['value'])
+                  .reduce((v1, v2) => v1 + v2),
+              distanceTexts: <String>[
+                ...route['legs'].map((leg) => leg['distance']['text']),
+              ],
+              distanceValues: <int>[
+                ...route['legs'].map((leg) => leg['distance']['value']),
+              ],
+              overviewPolyline: route["overview_polyline"]["points"],
+              totalDurationValue: route['legs']
+                  .map((leg) => leg['duration']['value'])
+                  .reduce((v1, v2) => v1 + v2),
+              durationTexts: <String>[
+                ...route['legs'].map((leg) => leg['duration']['text']),
+              ],
+              durationValues: <int>[
+                ...route['legs'].map((leg) => leg['duration']['value']),
+              ],
+              endAddress: route["legs"].last['end_address'],
+              startAddress: route["legs"].first['start_address'],
+            ),
+          );
         }
       } else {
         throw Exception(
-            "Unable to get route: Response ---> ${parsedJson["status"]} ");
+          "Unable to get route: Response ---> ${parsedJson["status"]} ",
+        );
       }
     }
     return results;
+  }
+
+  _getDistance(dynamic route) {
+    int result = 0;
+
+    final legs = route['legs'];
+
+    final steps = legs.map((leg) => leg['steps']).reduce((a, b) => a.addAll(b));
+
+    print('******');
+    for (final step in steps) {
+      if (step['maneuver'] != 'ferry' && step['maneuver'] != 'ferry-train') {
+        result += step['distance']['value'] as int;
+      }
+    }
+    print('******');
+    print(result);
+
+    return result;
   }
 }
