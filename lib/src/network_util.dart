@@ -38,7 +38,7 @@ class NetworkUtil {
                   .reduce((v1, v2) => v1 + v2),
               totalDrivenDistanceValue: route['legs']
                   .map((leg) => leg['steps'])
-                  .reduce((a, b) => a.addAll(b))
+                  .expand((stepList) => stepList as Iterable)
                   .where(
                     (step) =>
                         step['maneuver'] != 'ferry' &&
